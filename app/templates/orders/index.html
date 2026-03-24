@@ -1,79 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>All Orders - Laundry System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Order List | Laundry System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f4f7f6; }
-        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #2c3e50; color: white; }
-        
-        /* Status Badges */
-        .status-pill { padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; text-transform: uppercase; }
-        .received { background: #d1d8e0; color: #4b6584; }
-        .washing { background: #fff3cd; color: #856404; }
-        .drying { background: #d1ecf1; color: #0c5460; }
-        .ready { background: #d4edda; color: #155724; }
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --navy: #0f172a;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --success: #10b981;
+        }
 
-        .btn-update { background: #3498db; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 0.8em; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); padding: 15px; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .header-flex { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 24px; flex-wrap: wrap; gap: 15px;
+        }
+        h1 { font-size: 1.5rem; font-weight: 800; }
+
+        .btn-dash { 
+            background: white; border: 1px solid var(--border); color: var(--navy); 
+            padding: 10px 18px; border-radius: 8px; text-decoration: none; 
+            font-weight: 600; font-size: 0.85rem; 
+        }
+
+        /* Desktop Table Styling */
+        .table-container { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; text-align: left; padding: 14px 20px; font-size: 0.75rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+        td { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+
+        /* Status Pills */
+        .status-pill { padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; }
+        .received { background: #e2e8f0; color: #475569; }
+        .washing { background: #dbeafe; color: #1e40af; }
+        .drying { background: #fef3c7; color: #92400e; }
+        .ready { background: #dcfce7; color: #166534; }
+
+        /* Action Buttons */
+        .btn-update { 
+            background: var(--primary); color: white; padding: 8px 14px; 
+            text-decoration: none; border-radius: 6px; font-size: 0.8rem; 
+            font-weight: 600; transition: 0.2s; display: inline-block;
+        }
+        .btn-update:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 900px) {
+            thead { display: none; }
+            tr { 
+                display: block; background: white; margin-bottom: 12px; 
+                border-radius: var(--radius); border: 1px solid var(--border);
+                padding: 15px; position: relative;
+            }
+            td { 
+                display: block; padding: 6px 0; border: none; 
+                text-align: left; font-size: 0.95rem; 
+            }
+            
+            td:before { 
+                content: attr(data-label); font-size: 10px; text-transform: uppercase; 
+                color: #94a3b8; display: block; font-weight: 800; margin-bottom: 2px;
+            }
+
+            .btn-update { 
+                display: block; width: 100%; text-align: center; 
+                padding: 14px; font-size: 1rem; margin-top: 10px; 
+            }
+            
+            .price-tag { font-size: 1.2rem; color: var(--success); font-weight: 800; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-flex">
-            <h1>Master Order List</h1>
-            <a href="{{ url_for('index') }}" style="color: #3498db; text-decoration: none; font-weight: bold;">← Back to Dashboard</a>
-        </div>
+<div class="container">
+    <div class="header-flex">
+        <h1> Master Order List</h1>
+        <a href="{{ url_for('index') }}" class="btn-dash">← Dashboard</a>
+    </div>
 
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th>Order #</th>
-                    <th>Customer Name</th>
-                    <th>Service Type</th>
+                    <th>Customer</th>
+                    <th>Service</th>
                     <th>Total Price</th>
                     <th>Status</th>
                     <th>Date Received</th>
-                    <th>Next Action</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for order in orders %}
                 <tr>
-                    <td>{{ order.id }}</td>
-                    <td><strong>{{ order.customer.name }}</strong></td>
-                    <td>{{ order.service_type }}</td>
-                    <td style="font-weight: bold; color: #27ae60;">R {{ "%.2f"|format(order.total_price) }}</td>
-                    <td>
+                    <td data-label="Order ID"><strong>#{{ order.id }}</strong></td>
+                    <td data-label="Customer">
+                        <span style="font-weight: 700; color: var(--primary);">{{ order.customer.name }}</span>
+                    </td>
+                    <td data-label="Service">{{ order.service_type }}</td>
+                    <td data-label="Total Price" class="price-tag">R {{ "%.2f"|format(order.total_price) }}</td>
+                    <td data-label="Current Status">
                         <span class="status-pill {{ order.status.lower() }}">
                             {{ order.status }}
                         </span>
                     </td>
-                    <td>{{ order.date_received.strftime('%d %b, %H:%M') }}</td>
-                    <td>
+                    <td data-label="Received" style="color: #64748b; font-size: 0.85rem;">
+                        {{ order.date_received.strftime('%d %b, %H:%M') }}
+                    </td>
+                    <td data-label="Next Step">
                         {% if order.status == 'Received' %}
                             <a href="{{ url_for('orders.update_status', order_id=order.id, new_status='Washing') }}" class="btn-update">Start Washing</a>
                         {% elif order.status == 'Washing' %}
-                            <a href="{{ url_for('orders.update_status', order_id=order.id, new_status='Drying') }}" class="btn-update">Move to Drying</a>
+                            <a href="{{ url_for('orders.update_status', order_id=order.id, new_status='Drying') }}" class="btn-update">Start Drying</a>
                         {% elif order.status == 'Drying' %}
                             <a href="{{ url_for('orders.update_status', order_id=order.id, new_status='Ready') }}" class="btn-update">Mark as Ready</a>
                         {% else %}
-                            <span style="color: #27ae60; font-weight: bold;">✔ Done</span>
+                            <span style="color: var(--success); font-weight: 700;"> Ready for Collection</span>
                         {% endif %}
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 30px; color: #7f8c8d;">No active orders in the system.</td>
+                    <td colspan="7" style="text-align: center; padding: 60px; color: #94a3b8;">
+                        <p style="font-size: 2rem;">📭</p>
+                        <p>No orders in the system right now.</p>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
 
 </body>
 </html>

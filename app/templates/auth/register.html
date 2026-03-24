@@ -1,62 +1,417 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Initial System Setup - Laundry System</title>
+    <meta charset="UTF-8">
+    <title>System Setup – Fahiza's Laundry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .setup-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 400px; }
-        
-        .setup-box h2 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
-        .init-warning { background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; font-size: 0.85em; margin-bottom: 25px; border-left: 4px solid #f39c12; text-align: center; }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        
-        .btn-register { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1em; }
-        .btn-register:hover { background: #219150; }
-        
-        .field-error { color: #e74c3c; font-size: 0.85em; margin-top: 5px; display: block; font-weight: bold; }
+        :root {
+            --navy:   #1A2744;
+            --sky:    #4A90C4;
+            --mint:   #2EB88A;
+            --cream:  #FAF7F2;
+            --border: #E4E0D8;
+            --muted:  #6B7280;
+            --error:  #E8604C;
+            --warn-bg: #FFF8EC;
+            --warn-bd: #F5DCAA;
+            --warn-tx: #9A6700;
+            --white:  #FFFFFF;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-deco { position: absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; overflow:hidden; }
+        .bg-deco .circle { position:absolute; border-radius:50%; background:rgba(74,144,196,.08); }
+        .bg-deco .c1 { width:350px; height:350px; top:-80px; left:-100px; }
+        .bg-deco .c2 { width:200px; height:200px; bottom:-50px; right:-60px; }
+
+        .clothesline {
+            position: absolute; top:0; left:0; right:0;
+            text-align:center; padding-top:18px;
+            font-size:22px; letter-spacing:12px;
+            opacity:.3; user-select:none;
+        }
+
+        .setup-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 48px 44px 44px;
+            width: 440px;
+            position: relative;
+            box-shadow: 0 30px 80px rgba(0,0,0,.35);
+            animation: slideUp .5s cubic-bezier(.22,.68,0,1.2) both;
+        }
+
+        @keyframes slideUp {
+            from { opacity:0; transform:translateY(30px) scale(.97); }
+            to   { opacity:1; transform:translateY(0) scale(1); }
+        }
+
+        .brand-badge {
+            display:flex; align-items:center; gap:14px;
+            margin-bottom:24px;
+        }
+        .bubble {
+            width:50px; height:50px;
+            background:var(--navy); border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size:24px;
+            box-shadow: 0 0 0 8px rgba(26,39,68,.08);
+        }
+        .brand-text h1 {
+            font-family:'Playfair Display',serif;
+            font-size:20px; color:var(--navy); line-height:1.15;
+        }
+        .brand-text span {
+            font-size:11px; color:var(--muted);
+            text-transform:uppercase; letter-spacing:1.5px; font-weight:500;
+        }
+
+        .warning-box {
+            background:var(--warn-bg);
+            border:1px solid var(--warn-bd);
+            border-left: 4px solid var(--warn-tx);
+            border-radius:10px;
+            padding:12px 16px;
+            margin-bottom:26px;
+            display:flex; gap:10px; align-items:flex-start;
+        }
+        .warning-box .warn-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+        .warning-box p {
+            font-size:13px;
+            color:var(--warn-tx);
+            line-height:1.5;
+        }
+        .warning-box p strong { font-weight:700; }
+
+        .card-title {
+            font-size:22px; font-weight:600;
+            color:var(--navy); margin-bottom:4px;
+        }
+        .card-sub {
+            font-size:13.5px; color:var(--muted);
+            margin-bottom:26px;
+        }
+
+        /* progress steps */
+        .steps {
+            display:flex; gap:0;
+            margin-bottom:30px;
+        }
+        .step {
+            flex:1; text-align:center;
+            font-size:11.5px; font-weight:600;
+            color:var(--muted);
+            padding-bottom:10px;
+            border-bottom:2px solid var(--border);
+            position:relative;
+            transition:color .3s;
+        }
+        .step.active {
+            color:var(--sky);
+            border-bottom-color:var(--sky);
+        }
+        .step.done {
+            color:var(--mint);
+            border-bottom-color:var(--mint);
+        }
+        .step-num {
+            width:22px; height:22px;
+            border-radius:50%;
+            background:var(--border);
+            display:inline-flex; align-items:center; justify-content:center;
+            font-size:11px; margin-bottom:5px;
+            transition:background .3s, color .3s;
+        }
+        .step.active .step-num { background:var(--sky); color:var(--white); }
+        .step.done   .step-num { background:var(--mint); color:var(--white); }
+
+        /* Form */
+        .form-group { margin-bottom:18px; }
+        .form-group label {
+            display:block; font-size:13px; font-weight:600;
+            color:var(--navy); margin-bottom:7px;
+        }
+
+        .input-wrap { position:relative; }
+        .input-wrap .input-icon {
+            position:absolute; left:14px; top:50%; transform:translateY(-50%);
+            font-size:16px; pointer-events:none;
+        }
+        .input-wrap input {
+            width:100%;
+            padding:12px 14px 12px 42px;
+            border:1.5px solid var(--border);
+            border-radius:10px;
+            font-family:'DM Sans',sans-serif;
+            font-size:14px; color:var(--navy);
+            background:#FAFAFA; outline:none;
+            transition:border-color .2s, box-shadow .2s;
+        }
+        .input-wrap input:focus {
+            border-color:var(--sky); background:var(--white);
+            box-shadow:0 0 0 4px rgba(74,144,196,.12);
+        }
+        .input-wrap input.valid   { border-color:var(--mint); }
+        .input-wrap input.invalid { border-color:var(--error); }
+        .input-wrap input::placeholder { color:#B0B8C4; }
+
+        .eye-btn {
+            position:absolute; right:12px; top:50%; transform:translateY(-50%);
+            background:none; border:none; cursor:pointer;
+            font-size:16px; color:var(--muted); padding:4px;
+            transition:color .2s;
+        }
+        .eye-btn:hover { color:var(--sky); }
+
+        /* strength bar */
+        .strength-wrap { margin-top:8px; }
+        .strength-bar {
+            height:4px; border-radius:2px;
+            background:var(--border);
+            overflow:hidden; margin-bottom:4px;
+        }
+        .strength-fill {
+            height:100%; border-radius:2px;
+            width:0%; transition:width .4s, background .4s;
+        }
+        .strength-label { font-size:11.5px; color:var(--muted); font-weight:500; }
+
+        /* match indicator */
+        .match-hint {
+            font-size:12px; margin-top:5px;
+            font-weight:500; display:none;
+        }
+        .match-hint.match   { color:var(--mint); display:block; }
+        .match-hint.nomatch { color:var(--error); display:block; }
+
+        .field-error {
+            color:var(--error); font-size:12px;
+            margin-top:5px; display:block; font-weight:500;
+        }
+
+        .btn-submit {
+            width:100%; padding:14px;
+            background:var(--mint); color:var(--white);
+            border:none; border-radius:10px;
+            font-family:'DM Sans',sans-serif;
+            font-size:15px; font-weight:600;
+            cursor:pointer; margin-top:6px;
+            transition:background .2s, transform .15s, box-shadow .2s;
+            letter-spacing:.3px;
+        }
+        .btn-submit:hover {
+            background:#259A74;
+            box-shadow:0 6px 20px rgba(46,184,138,.35);
+            transform:translateY(-1px);
+        }
+        .btn-submit:active { transform:translateY(0); }
+        .btn-submit:disabled {
+            opacity:.5; cursor:not-allowed;
+            transform:none; box-shadow:none;
+        }
+
+        .divider { height:1px; background:var(--border); margin:24px 0; }
+        .card-footer { text-align:center; font-size:12px; color:var(--muted); }
+        .card-footer a { color:var(--sky); text-decoration:none; font-weight:600; }
+        .card-footer a:hover { text-decoration:underline; }
     </style>
 </head>
 <body>
 
-    <div class="setup-box">
-        <h2>Create Admin Account</h2>
-        <div class="init-warning">
-            <strong>System Initialization:</strong> This account will have full control over the Laundry Management System.
+<div class="bg-deco">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+</div>
+<div class="clothesline">🧥 👕 🧣 👗 🧤 👚</div>
+
+<div class="setup-card">
+
+    <div class="brand-badge">
+        <div class="bubble">🫧</div>
+        <div class="brand-text">
+            <h1>Fahiza's<br>Laundry</h1>
+            <span>System Setup</span>
+        </div>
+    </div>
+
+    <!-- Step progress -->
+    <div class="steps">
+        <div class="step done">
+            <div><div class="step-num">✓</div></div>
+            Install
+        </div>
+        <div class="step active">
+            <div><div class="step-num">2</div></div>
+            Admin Account
+        </div>
+        <div class="step">
+            <div><div class="step-num">3</div></div>
+            Done
+        </div>
+    </div>
+
+    <p class="card-title">Create Admin Account</p>
+    <p class="card-sub">Set up the primary account for your laundry system.</p>
+
+    <div class="warning-box">
+        <span class="warn-icon">⚠️</span>
+        <p><strong>One-time setup:</strong> This account will have full control over the Laundry Management System. Keep credentials safe.</p>
+    </div>
+
+    <form method="POST" id="setupForm" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.username.label }}
+            <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                {{ form.username(class="form-control", placeholder="e.g. admin_fahiza", id="usernameField") }}
+            </div>
+            {% for error in form.username.errors %}
+                <span class="field-error">{{ error }}</span>
+            {% endfor %}
         </div>
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            
-            <div class="form-group">
-                {{ form.username.label }}
-                {{ form.username(class="form-control", placeholder="e.g. admin_fahiza") }}
-                {% for error in form.username.errors %}
-                    <span class="field-error"> {{ error }} </span>
-                {% endfor %}
+        <div class="form-group">
+            {{ form.password.label }}
+            <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                {{ form.password(class="form-control", placeholder="Create a strong password", id="pwdField") }}
+                <button type="button" class="eye-btn" id="eyeBtn1">👁️</button>
             </div>
-
-            <div class="form-group">
-                {{ form.password.label }}
-                {{ form.password(class="form-control", placeholder="Create a strong password") }}
-                {% for error in form.password.errors %}
-                    <span class="field-error"> {{ error }} </span>
-                {% endfor %}
+            <!-- strength meter -->
+            <div class="strength-wrap" id="strengthWrap" style="display:none">
+                <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                <span class="strength-label" id="strengthLabel">Strength: —</span>
             </div>
+            {% for error in form.password.errors %}
+                <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-            <div class="form-group">
-                {{ form.confirm_password.label }}
-                {{ form.confirm_password(class="form-control", placeholder="Repeat password") }}
-                {% for error in form.confirm_password.errors %}
-                    <span class="field-error"> {{ error }} </span>
-                {% endfor %}
+        <div class="form-group">
+            {{ form.confirm_password.label }}
+            <div class="input-wrap">
+                <span class="input-icon">🔑</span>
+                {{ form.confirm_password(class="form-control", placeholder="Repeat password", id="confirmField") }}
+                <button type="button" class="eye-btn" id="eyeBtn2">👁️</button>
             </div>
+            <span class="match-hint" id="matchHint"></span>
+            {% for error in form.confirm_password.errors %}
+                <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-            {{ form.submit(class="btn-register", value="Initialize System") }}
-        </form>
+        {{ form.submit(class="btn-submit", value="Initialize System", id="submitBtn") }}
+    </form>
+
+    <div class="divider"></div>
+    <div class="card-footer">
+        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
     </div>
+
+</div>
+
+<script>
+    // ── Toggle password visibility ──────────────────────────
+    function makeToggle(btnId, fieldId) {
+        const btn = document.getElementById(btnId);
+        const field = document.getElementById(fieldId);
+        if (!btn || !field) return;
+        btn.addEventListener('click', () => {
+            const show = field.type === 'password';
+            field.type = show ? 'text' : 'password';
+            btn.textContent = show ? '🙈' : '👁️';
+        });
+    }
+    makeToggle('eyeBtn1', 'pwdField');
+    makeToggle('eyeBtn2', 'confirmField');
+
+    // ── Password strength ───────────────────────────────────
+    const pwdField      = document.getElementById('pwdField');
+    const confirmField  = document.getElementById('confirmField');
+    const strengthWrap  = document.getElementById('strengthWrap');
+    const strengthFill  = document.getElementById('strengthFill');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const matchHint     = document.getElementById('matchHint');
+    const submitBtn     = document.getElementById('submitBtn');
+
+    function getStrength(pwd) {
+        let score = 0;
+        if (pwd.length >= 8)  score++;
+        if (pwd.length >= 12) score++;
+        if (/[A-Z]/.test(pwd))  score++;
+        if (/[0-9]/.test(pwd))  score++;
+        if (/[^A-Za-z0-9]/.test(pwd)) score++;
+        return score; // 0–5
+    }
+
+    const levels = [
+        { label: 'Very Weak',  color: '#E8604C', pct: '15%' },
+        { label: 'Weak',       color: '#E8604C', pct: '30%' },
+        { label: 'Fair',       color: '#D4A843', pct: '55%' },
+        { label: 'Good',       color: '#4A90C4', pct: '75%' },
+        { label: 'Strong',     color: '#2EB88A', pct: '90%' },
+        { label: '💪 Excellent', color: '#2EB88A', pct: '100%' },
+    ];
+
+    pwdField && pwdField.addEventListener('input', () => {
+        const val = pwdField.value;
+        if (!val) { strengthWrap.style.display = 'none'; return; }
+        strengthWrap.style.display = 'block';
+        const score = Math.min(getStrength(val), 5);
+        const lv = levels[score];
+        strengthFill.style.width    = lv.pct;
+        strengthFill.style.background = lv.color;
+        strengthLabel.textContent   = 'Strength: ' + lv.label;
+        checkMatch();
+    });
+
+    // ── Confirm match ───────────────────────────────────────
+    function checkMatch() {
+        const p = pwdField ? pwdField.value : '';
+        const c = confirmField ? confirmField.value : '';
+        if (!c) { matchHint.className = 'match-hint'; return; }
+        if (p === c) {
+            matchHint.textContent = 'Passwords match';
+            matchHint.className   = 'match-hint match';
+            confirmField.classList.add('valid');
+            confirmField.classList.remove('invalid');
+        } else {
+            matchHint.textContent = ' Passwords do not match';
+            matchHint.className   = 'match-hint nomatch';
+            confirmField.classList.add('invalid');
+            confirmField.classList.remove('valid');
+        }
+    }
+
+    confirmField && confirmField.addEventListener('input', checkMatch);
+
+    // ── Disable submit until passwords match ────────────────
+    const form = document.getElementById('setupForm');
+    form && form.addEventListener('submit', (e) => {
+        const p = pwdField ? pwdField.value : '';
+        const c = confirmField ? confirmField.value : '';
+        if (p !== c) {
+            e.preventDefault();
+            checkMatch();
+            confirmField.focus();
+        }
+    });
+</script>
 
 </body>
 </html>

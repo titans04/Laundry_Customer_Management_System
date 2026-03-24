@@ -1,76 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Customer Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Directory | Laundry System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f4f7f6; }
-        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        /* Search Box in Index */
-        .search-bar { margin-bottom: 20px; display: flex; gap: 10px; }
-        .search-input { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #2c3e50; color: white; }
-        tr:hover { background-color: #f9f9f9; }
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --navy: #0f172a;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --success: #10b981;
+        }
 
-        .btn { padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 0.9em; }
-        .btn-add { background: #27ae60; color: white; }
-        .btn-view { background: #3498db; color: white; }
-        .btn-dash { background: #7f8c8d; color: white; }
-        
-        .badge-phone { background: #e8f4fd; color: #2980b9; padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); padding: 15px; }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        /* Header logic */
+        .header-flex { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; flex-wrap: wrap; gap: 15px;
+        }
+        h1 { font-size: 1.5rem; font-weight: 800; }
+
+        .btn { 
+            padding: 10px 18px; border-radius: 8px; text-decoration: none; 
+            font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-add { background: var(--success); color: white; }
+        .btn-dash { background: white; border: 1px solid var(--border); color: var(--navy); }
+
+        /* Modern Search Bar */
+        .search-area {
+            background: white; padding: 15px; border-radius: var(--radius);
+            border: 1px solid var(--border); margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .search-bar { display: flex; gap: 10px; }
+        .search-input { 
+            flex-grow: 1; padding: 12px 15px; border: 1px solid var(--border); 
+            border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s;
+        }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .btn-filter { background: var(--primary); color: white; border: none; cursor: pointer; }
+
+        /* Table & Mobile Responsive Cards */
+        .table-container { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; text-align: left; padding: 12px 20px; font-size: 0.75rem; text-transform: uppercase; color: #64748b; }
+        td { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; }
+
+        .badge-phone { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+        .customer-name { font-weight: 600; display: block; font-size: 1rem; }
+        .email-text { color: #64748b; font-size: 0.85rem; }
+
+        /* Mobile Viewport Magic */
+        @media (max-width: 768px) {
+            .header-flex { flex-direction: column; align-items: stretch; }
+            .btn { justify-content: center; }
+            
+            thead { display: none; } /* Hide table headers on mobile */
+            tr { display: block; padding: 15px; border-bottom: 8px solid var(--bg); }
+            td { display: block; padding: 5px 0; border: none; }
+            
+            .btn-view { width: 100%; margin-top: 10px; background: #eff6ff; color: var(--primary); text-align: center; border: 1px solid #dbeafe; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-flex">
-            <h1>Customer Directory</h1>
-            <div>
-                <a href="{{ url_for('index') }}" class="btn btn-dash">Dashboard</a>
-                <a href="{{ url_for('customers.add') }}" class="btn btn-add">+ Add New Customer</a>
-            </div>
+<div class="container">
+    <div class="header-flex">
+        <h1>👥 Customer Directory</h1>
+        <div style="display: flex; gap: 8px;">
+            <a href="{{ url_for('index') }}" class="btn btn-dash">Dashboard</a>
+            <a href="{{ url_for('customers.add') }}" class="btn btn-add">＋ New Customer</a>
         </div>
+    </div>
 
+    <div class="search-area">
         <form method="POST" action="{{ url_for('customers.index') }}" class="search-bar">
             {{ form.hidden_tag() }}
-            {{ form.search_query(class="search-input", placeholder="Filter by Name, Phone, or Email...") }}
-            <button type="submit" class="btn btn-view" style="border:none; cursor:pointer;">Filter</button>
-            <a href="{{ url_for('customers.index') }}" style="font-size: 0.8em; color: #7f8c8d; align-self: center;">Clear Search</a>
+            {{ form.search_query(class="search-input", placeholder="Search name, phone, or email...") }}
+            <button type="submit" class="btn btn-filter">Filter</button>
         </form>
+        {% if form.search_query.data %}
+            <div style="margin-top: 10px;">
+                <a href="{{ url_for('customers.index') }}" style="color: #ef4444; font-size: 0.8rem; text-decoration: none; font-weight: 600;">✕ Clear Search Filters</a>
+            </div>
+        {% endif %}
+    </div>
 
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>Customer Name</th>
-                    <th>Phone Number</th>
-                    <th>Email</th>
+                    <th>Customer Information</th>
+                    <th>Contact Details</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for customer in customers %}
                 <tr>
-                    <td><strong>{{ customer.name }}</strong></td>
-                    <td><span class="badge-phone">{{ customer.phone }}</span></td>
-                    <td>{{ customer.email or 'N/A' }}</td>
                     <td>
-                        <a href="{{ url_for('customers.profile', customer_id=customer.id) }}" class="btn btn-view">View Profile & Order</a>
+                        <span class="customer-name">{{ customer.name }}</span>
+                        <span class="email-text">{{ customer.email or 'No email' }}</span>
+                    </td>
+                    <td>
+                        <span class="badge-phone">{{ customer.phone }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('customers.profile', customer_id=customer.id) }}" class="btn btn-view" style="background: var(--navy); color:white;">
+                            View Profile & Order
+                        </a>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 40px; color: #7f8c8d;">
-                        No customers found. Click "Add New Customer" to start.
+                    <td colspan="3" style="text-align: center; padding: 60px; color: #94a3b8;">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">🔍</p>
+                        <p>No customers match that search.</p>
+                        <a href="{{ url_for('customers.add') }}" style="color: var(--primary); font-weight: 600;">Add a new customer profile</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
 
 </body>
 </html>

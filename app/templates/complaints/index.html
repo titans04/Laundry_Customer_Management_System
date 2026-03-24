@@ -1,47 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Customer Complaints - Laundry System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Issues | Laundry System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f4f7f6; }
-        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; vertical-align: top; }
-        th { background: #c0392b; color: white; }
-        
-        /* Status Color Coding */
-        .status-pill { padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; display: inline-block; margin-bottom: 5px; }
-        .open { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .in-progress { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .resolved { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        
-        .notes-text { font-size: 0.85em; color: #666; font-style: italic; display: block; max-width: 250px; margin-top: 5px; }
-        .customer-link { color: #2980b9; text-decoration: none; font-weight: bold; }
-        
-        /* Action Buttons */
-        .btn-action { padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.8em; font-weight: bold; display: block; text-align: center; margin-bottom: 5px; }
-        .btn-investigate { background: #f39c12; color: white; }
-        .btn-resolve { background: #27ae60; color: white; }
-        .btn-delete { background: #e74c3c; color: white; border: none; cursor: pointer; width: 100%; }
-        .btn-dash { background: #7f8c8d; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 0.9em; }
+        :root {
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --navy: #0f172a;
+            --border: #e2e8f0;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); padding: 15px; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .header-flex { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 24px; flex-wrap: wrap; gap: 15px;
+        }
+        h1 { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+
+        .btn-dash { 
+            background: white; border: 1px solid var(--border); color: var(--navy); 
+            padding: 10px 18px; border-radius: 8px; text-decoration: none; 
+            font-weight: 600; font-size: 0.85rem; 
+        }
+
+        /* Desktop Table Logic */
+        .table-container { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #fff1f2; text-align: left; padding: 14px 20px; font-size: 0.75rem; text-transform: uppercase; color: var(--danger); letter-spacing: 0.5px; font-weight: 700; }
+        td { padding: 20px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+
+        /* Status Pills */
+        .status-pill { padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+        .open { background: #fee2e2; color: #991b1b; }
+        .in-progress { background: #fef3c7; color: #92400e; }
+        .resolved { background: #dcfce7; color: #166534; }
+
+        /* Content Styling */
+        .issue-text { font-weight: 600; font-size: 1rem; color: #1e293b; display: block; margin-bottom: 8px; }
+        .internal-notes { 
+            background: #f1f5f9; padding: 10px 12px; border-radius: 8px; 
+            font-size: 0.85rem; color: #475569; display: block; border-left: 3px solid #cbd5e1;
+        }
+        .customer-link { text-decoration: none; color: var(--navy); font-weight: 700; font-size: 1rem; }
+        .customer-link:hover { color: #2563eb; }
+
+        /* Actions */
+        .action-stack { display: flex; flex-direction: column; gap: 8px; width: 140px; }
+        .btn-action { 
+            padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; 
+            font-weight: 600; text-align: center; border: none; cursor: pointer; transition: 0.2s;
+        }
+        .btn-investigate { background: var(--warning); color: white; }
+        .btn-resolve { background: var(--success); color: white; }
+        .btn-delete { background: #fff1f2; color: var(--danger); }
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        /* Mobile Viewport */
+        @media (max-width: 850px) {
+            thead { display: none; }
+            tr { display: block; background: white; margin-bottom: 15px; border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; }
+            td { display: block; padding: 10px 0; border: none; }
+            .action-stack { flex-direction: row; width: 100%; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; }
+            .btn-action { flex: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-flex">
-            <h1>⚠️ Customer Complaints & Issues</h1>
-            <a href="{{ url_for('index') }}" class="btn btn-dash">Back to Dashboard</a>
-        </div>
+<div class="container">
+    <div class="header-flex">
+        <h1>⚠️ Customer Complaints</h1>
+        <a href="{{ url_for('index') }}" class="btn-dash">← Dashboard</a>
+    </div>
 
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>Date Logged</th>
+                    <th>Reported On</th>
                     <th>Customer</th>
-                    <th>Issue & Internal Notes</th>
+                    <th>Issue Details</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -49,17 +97,22 @@
             <tbody>
                 {% for complaint in complaints %}
                 <tr>
-                    <td>{{ complaint.date_logged.strftime('%d %b %Y') }}</td>
+                    <td style="white-space: nowrap; font-size: 0.9rem; color: #64748b;">
+                        {{ complaint.date_logged.strftime('%d %b %Y') }}
+                    </td>
                     <td>
                         <a href="{{ url_for('customers.profile', customer_id=complaint.customer.id) }}" class="customer-link">
                             {{ complaint.customer.name }}
                         </a>
-                        <br><small>{{ complaint.customer.phone }}</small>
+                        <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">{{ complaint.customer.phone }}</div>
                     </td>
                     <td>
-                        <strong>{{ complaint.description }}</strong>
+                        <span class="issue-text">{{ complaint.description }}</span>
                         {% if complaint.internal_notes %}
-                            <span class="notes-text">Staff Notes: {{ complaint.internal_notes }}</span>
+                            <div class="internal-notes">
+                                <strong style="font-size: 10px; text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 4px;">Internal Staff Notes</strong>
+                                {{ complaint.internal_notes }}
+                            </div>
                         {% endif %}
                     </td>
                     <td>
@@ -68,37 +121,35 @@
                         </span>
                     </td>
                     <td>
-                        <div style="width: 150px;">
+                        <div class="action-stack">
                             {% if complaint.status == 'Open' %}
                                 <a href="{{ url_for('complaints.update_status', complaint_id=complaint.id, new_status='In Progress') }}" 
-                                   class="btn-action btn-investigate">
-                                   ⏳ Investigate
-                                </a>
+                                   class="btn-action btn-investigate">⏳ Investigate</a>
                             {% endif %}
 
                             {% if complaint.status == 'In Progress' %}
                                 <a href="{{ url_for('complaints.update_status', complaint_id=complaint.id, new_status='Resolved') }}" 
-                                   class="btn-action btn-resolve">
-                                   ✓ Mark Resolved
-                                </a>
+                                   class="btn-action btn-resolve">✓ Resolve</a>
                             {% endif %}
 
-                            <form action="{{ url_for('complaints.delete', complaint_id=complaint.id) }}" method="POST" onsubmit="return confirm('Permanently delete this record?');">
-                                <button type="submit" class="btn-action btn-delete">🗑 Delete</button>
+                            <form action="{{ url_for('complaints.delete', complaint_id=complaint.id) }}" method="POST" onsubmit="return confirm('Permanently delete this complaint?');">
+                                <button type="submit" class="btn-action btn-delete">Delete</button>
                             </form>
                         </div>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 40px; color: #7f8c8d;">
-                        Excellent! There are currently no recorded complaints.
+                    <td colspan="5" style="text-align: center; padding: 80px; color: #94a3b8;">
+                        <p style="font-size: 2.5rem; margin-bottom: 15px;">🎉</p>
+                        <p style="font-weight: 600;">No active complaints. Everyone is happy!</p>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
 
 </body>
 </html>

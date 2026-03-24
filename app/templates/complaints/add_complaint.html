@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Complaint - {{ customer.name }}</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding-top: 50px; }
+        .form-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 450px; }
+        .customer-tag { background: #fdf2f2; border-left: 5px solid #e74c3c; padding: 10px; margin-bottom: 20px; color: #c0392b; }
+        .form-control { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .btn-log { background: #e74c3c; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Report an Issue</h2>
+        <div class="customer-tag">
+            <strong>Customer:</strong> {{ customer.name }}
+        </div>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.description.label }}
+            {{ form.description(class="form-control", rows="5") }}
+            
+            {{ form.status.label }}
+            {{ form.status(class="form-control") }}
+            
+            {{ form.submit(class="btn-log") }}
+        </form>
+        <p style="text-align:center;"><a href="{{ url_for('customers.profile', customer_id=customer.id) }}" style="color:#7f8c8d; text-decoration:none;">Cancel</a></p>
+    </div>
+</body>
+</html>

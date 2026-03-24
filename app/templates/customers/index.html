@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Management</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f4f7f6; }
+        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        /* Search Box in Index */
+        .search-bar { margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-input { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #2c3e50; color: white; }
+        tr:hover { background-color: #f9f9f9; }
+
+        .btn { padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 0.9em; }
+        .btn-add { background: #27ae60; color: white; }
+        .btn-view { background: #3498db; color: white; }
+        .btn-dash { background: #7f8c8d; color: white; }
+        
+        .badge-phone { background: #e8f4fd; color: #2980b9; padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-flex">
+            <h1>Customer Directory</h1>
+            <div>
+                <a href="{{ url_for('index') }}" class="btn btn-dash">Dashboard</a>
+                <a href="{{ url_for('customers.add') }}" class="btn btn-add">+ Add New Customer</a>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('customers.index') }}" class="search-bar">
+            {{ form.hidden_tag() }}
+            {{ form.search_query(class="search-input", placeholder="Filter by Name, Phone, or Email...") }}
+            <button type="submit" class="btn btn-view" style="border:none; cursor:pointer;">Filter</button>
+            <a href="{{ url_for('customers.index') }}" style="font-size: 0.8em; color: #7f8c8d; align-self: center;">Clear Search</a>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td><strong>{{ customer.name }}</strong></td>
+                    <td><span class="badge-phone">{{ customer.phone }}</span></td>
+                    <td>{{ customer.email or 'N/A' }}</td>
+                    <td>
+                        <a href="{{ url_for('customers.profile', customer_id=customer.id) }}" class="btn btn-view">View Profile & Order</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        No customers found. Click "Add New Customer" to start.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

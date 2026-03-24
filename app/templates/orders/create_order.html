@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Order - {{ customer.name }}</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding-top: 50px; }
+        .order-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 450px; }
+        .customer-brief { background: #e8f4fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #3498db; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #2c3e50; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .btn-submit { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .cancel-link { display: block; text-align: center; margin-top: 15px; color: #7f8c8d; text-decoration: none; font-size: 0.9em; }
+        .error-text { color: #e74c3c; font-size: 0.8em; margin-top: 5px; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="order-container">
+        <h2 style="margin-top:0;">Create New Order</h2>
+        
+        <div class="customer-brief">
+            <strong>Customer:</strong> {{ customer.name }}<br>
+            <strong>Phone:</strong> {{ customer.phone }}
+        </div>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.service_type.label }}
+                {{ form.service_type(class="form-control") }}
+                <small style="color: #7f8c8d;">Prices are fixed by Admin to prevent errors.</small>
+            </div>
+
+            <div class="form-group">
+                {{ form.item_description.label }}
+                {{ form.item_description(class="form-control") }}
+                {% for error in form.item_description.errors %}<span class="error-text">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.quantity.label }}
+                {{ form.quantity(class="form-control") }}
+                {% for error in form.quantity.errors %}<span class="error-text">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.estimated_ready_time.label }}
+                {{ form.estimated_ready_time(class="form-control", type="datetime-local") }}
+                <small style="color: #3498db;">Workflow: Received → Washing → Drying → Ready.</small>
+                {% for error in form.estimated_ready_time.errors %}<span class="error-text">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.notes.label }}
+                {{ form.notes(class="form-control", rows="3") }}
+            </div>
+
+            {{ form.submit(class="btn-submit") }}
+        </form>
+        
+        <a href="{{ url_for('customers.profile', customer_id=customer.id) }}" class="cancel-link">Cancel and Go Back</a>
+    </div>
+
+</body>
+</html>
